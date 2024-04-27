@@ -1,0 +1,57 @@
+body {
+  background-color: rgb(204, 200, 200);
+  text-align: left;
+  margin-top: 20px;
+}
+
+a {
+  color: coral;
+  text-decoration: none;
+}
+
+#a-long {
+  color: black;
+}
+
+input {
+  width: 400px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  padding: 10px;
+}
+
+button {
+  background-color: coral;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  margin-top: 10px;
+  margin-right: 20px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+form {
+  text-align: center;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border: 1px solid rgb(226, 221, 221);
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background-color: #fff;
+}
+
+.tab {
+  margin: 0 auto;
+  width: 80%;
+}

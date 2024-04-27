@@ -6,7 +6,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   # URL to the Unelma.IO API
   $url = 'https://unelma.io/api/v1/link';
   # Access token for the Unelma.IO API
-  $accessToken = '18|TvvFuaY1EGjqKiMGRqTy0fT8ahomGrwaMXScXlmc1338b136';
+  $accessToken = '';
 
   # Collect the long URL from the form input
   $longUrl = $_POST['longUrl'];

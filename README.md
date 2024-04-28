@@ -17,4 +17,7 @@ Step in terminal:
 1. cd to php script directory
 2. run -> composer vlucas/phpdotenv
 
+. Register and get your access token here:
+1. https://unelmacloud.com/register
+
 Happy coding!!!

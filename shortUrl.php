@@ -10,10 +10,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   require_once dirname(__FILE__) . "/vendor/autoload.php";
   $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
   $dotenv->load();
-  $accessToken = $_ENV['UNELMA_ACCESS_TOKEN'];
 
   # Access token for the Unelma.IO API
-  $accessToken = 'UNELMA_ACCESS_TOKEN';
+  $accessToken = $_ENV['UNELMA_ACCESS_TOKEN'];
 
   # Collect the long URL from the form input
   $longUrl = $_POST['longUrl'];

@@ -14,6 +14,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   # Access token for the Unelma.IO API
   $accessToken = $_ENV['UNELMA_ACCESS_TOKEN'];
 
+  if (!$accessToken) {
+    die('Access token not found in .env file');
+  }
+
   # Collect the long URL from the form input
   $longUrl = $_POST['longUrl'];
 

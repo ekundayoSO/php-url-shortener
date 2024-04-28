@@ -14,6 +14,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   # Access token for the Unelma.IO API
   $accessToken = $_ENV['UNELMA_ACCESS_TOKEN'];
 
+  # var_dump($accessToken);
+  
   if (!$accessToken) {
     die('Access token not found in .env file');
   }

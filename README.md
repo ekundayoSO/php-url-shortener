@@ -8,10 +8,10 @@ Steps in app directory:
    
 Steps in php script:
 In your php script after api url add:
-  require_once dirname(__FILE__) . "/vendor/autoload.php";
-  $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-  $dotenv->load();
-  $accessToken = $_ENV['UNELMA_ACCESS_TOKEN'];
+  . require_once dirname(__FILE__) . "/vendor/autoload.php";
+  . $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+  . $dotenv->load();
+  . $accessToken = $_ENV['UNELMA_ACCESS_TOKEN'];
 
 Step in terminal:
 1. cd to php script directory

@@ -5,8 +5,15 @@ include 'db.php';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   # URL to the Unelma.IO API
   $url = 'https://unelma.io/api/v1/link';
+
+  # Load access token from .env
+  require_once dirname(__FILE__) . "/vendor/autoload.php";
+  $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+  $dotenv->load();
+  $accessToken = $_ENV['UNELMA_ACCESS_TOKEN'];
+
   # Access token for the Unelma.IO API
-  $accessToken = '';
+  $accessToken = 'UNELMA_ACCESS_TOKEN';
 
   # Collect the long URL from the form input
   $longUrl = $_POST['longUrl'];

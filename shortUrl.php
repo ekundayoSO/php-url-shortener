@@ -1,83 +1,74 @@
 <?php
 include 'db.php';
 
- #  Check if the form was submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  # URL to the Unelma.IO API
-  $url = 'https://unelma.io/api/v1/link';
+  if (isset($_POST['longUrl'])) {
+    
+    $longUrl = $_POST['longUrl'];
 
-  # Load access token from .env
-  require_once dirname(__FILE__) . "/vendor/autoload.php";
-  $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-  $dotenv->load();
+    if (filter_var($longUrl, FILTER_VALIDATE_URL)) {
+      require_once dirname(__FILE__) . "/vendor/autoload.php";
+      $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+      $dotenv->load();
 
-  # Access token for the Unelma.IO API
-  $accessToken = $_ENV['UNELMA_ACCESS_TOKEN'];
+      $accessToken = $_ENV['UNELMA_ACCESS_TOKEN'];
 
-  # var_dump($accessToken);
-  
-  if (!$accessToken) {
-    die('Access token not found in .env file');
-  }
-
-  # Collect the long URL from the form input
-  $longUrl = $_POST['longUrl'];
-
-  # Prepare the data to be sent in the POST request
-  $data = [
-    "type" => "direct",
-    "password" => null,
-    "active" => true,
-    "expires_at" => "2024-05-06",
-    "activates_at" => "2024-04-20",
-    "utm" => "utm_source=google&utm_medium=banner",
-    "domain_id" => null,
-    "long_url" => $longUrl
-  ];
-
-  $ch = curl_init($url);
-  curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    'accept: application/json',
-    'Content-Type: application/json',
-    'Authorization: Bearer ' . $accessToken,
-  ]);
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-  curl_setopt($ch, CURLOPT_POST, true);
-  curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-
-  # Execute the POST request
-  $response = curl_exec($ch);
-
-  if (curl_errno($ch)) {
-    echo 'Error:' . curl_error($ch);
-  } else {
-    # Decode the response
-    $responseDecoded = json_decode($response, true);
-
-    if (isset($responseDecoded['link']) && isset($responseDecoded['link']['short_url'])) {
-
-      # Inserting data into table
-      $sql = "INSERT INTO shortened_urls (long_url, short_url) VALUES (?, ?)";
-      $stmt = $connection->prepare($sql);
-      $stmt->bind_param("ss", $longUrl, $responseDecoded['link']['short_url']);
-      $stmt->execute();
-      $stmt->close();
-    } else {
-      echo 'The key "short_url" does not exist in the response.';
-
-      # Check for error status in the response
-      if (isset($responseDecoded['status']) && $responseDecoded['status'] == 'error') {
-        $error_message = isset($responseDecoded['error']) ? $responseDecoded['error'] : 'Unknown error occurred';
-        echo "<p>Error: $error_message</p>";
+      if (!$accessToken) {
+        die('Access token not found in .env file');
       }
-    }
-  }
 
-  # Close cURL session
-  curl_close($ch);
+      $url = 'https://unelma.io/api/v1/link';
+
+      $data = [
+        "type" => "direct",
+        "password" => null,
+        "active" => true,
+        "expires_at" => "2024-05-06",
+        "activates_at" => "2024-04-20",
+        "utm" => "utm_source=google&utm_medium=banner",
+        "domain_id" => null,
+        "long_url" => $longUrl
+      ];
+
+      $ch = curl_init($url);
+      curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'accept: application/json',
+        'Content-Type: application/json',
+        'Authorization: Bearer ' . $accessToken,
+      ]);
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+      curl_setopt($ch, CURLOPT_POST, true);
+      curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+
+      $response = curl_exec($ch);
+
+      if (curl_errno($ch)) {
+        echo 'Error:' . curl_error($ch);
+      } else {
+        $responseDecoded = json_decode($response, true);
+
+        if (isset($responseDecoded['link']) && isset($responseDecoded['link']['short_url'])) {
+          $shortUrl = $responseDecoded['link']['short_url'];
+
+          $sql = "INSERT INTO shortened_urls (long_url, short_url) VALUES (?, ?)";
+          $stmt = $connection->prepare($sql);
+          $stmt->bind_param("ss", $longUrl, $shortUrl);
+          $stmt->execute();
+          $stmt->close();
+        } else {
+          echo "Short URL not found in the response.";
+        }
+      }
+
+      curl_close($ch);
+    } else {
+      echo "Invalid URL entered.";
+    }
+  } else {
+    echo "URL not provided.";
+  }
 }
 
-# Retrieve all URLs from the database
 $query = "SELECT * FROM shortened_urls";
 $result = mysqli_query($connection, $query);
 
@@ -103,7 +94,6 @@ if (!$result) {
   </form>
   <div class="tab">
     <?php
-    # Check if $result contains any rows
     if (mysqli_num_rows($result) > 0) {
     ?>
       <table>
@@ -117,9 +107,8 @@ if (!$result) {
         ?>
           <tr>
             <td><?php echo $row['id']; ?></td>
-            <!--<td><?php echo $row['long_url']; ?></td>-->
-            <td><a id="a-long" target='_blank' href='<?php echo $row['long_url']; ?>'><?php echo $row['long_url']; ?></a></td>
-            <td><a target='_blank' href='<?php echo $row['short_url']; ?>'><?php echo $row['short_url']; ?></a></td>
+            <td><a id="a-long" target='_blank' href='<?php echo htmlspecialchars($row['long_url']); ?>'><?php echo htmlspecialchars($row['long_url']); ?></a></td>
+            <td><a target='_blank' href='<?php echo htmlspecialchars($row['short_url']); ?>'><?php echo htmlspecialchars($row['short_url']); ?></a></td>
           </tr>
         <?php
         }
